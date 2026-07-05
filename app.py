@@ -2,6 +2,7 @@ from controllers.customer_controller import CustomerController
 from controllers.plan_controller import PlanController
 from controllers.subscription_controller import SubscriptionController
 from controllers.payment_controller import PaymentController
+from controllers.ticket_controller import SupportTicketController
 
 
 def print_main_menu():
@@ -24,6 +25,7 @@ def main():
     plan_controller = PlanController()
     subscription_controller = SubscriptionController()
     payment_controller = PaymentController()
+    ticket_controller = SupportTicketController()
 
     while True:
 
@@ -49,8 +51,7 @@ def main():
 
         elif choice == "5":
 
-            print("\n===== SUPPORT TICKET MANAGEMENT =====")
-            print("Coming in Sprint 6.")
+            ticket_controller.ticket_menu()
 
         elif choice == "0":
 
