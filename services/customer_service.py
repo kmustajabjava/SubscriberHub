@@ -31,6 +31,25 @@ class CustomerService:
         if self.repository.phone_exists(customer.phone_number):
             return False, "Phone number already exists."
 
-        self.repository.insert_customer(customer)
+        success = self.repository.insert_customer(customer)
 
-        return True, "Customer registered successfully."
+        if success:
+            return True, "Customer registered successfully."
+
+        return False, "Customer registration failed."
+    
+    def get_customer_by_id(self, customer_id):
+
+        return self.repository.get_customer_by_id(customer_id)
+    
+    def get_customers_by_name(self, name):
+
+        return self.repository.get_customers_by_name(name)
+    
+    def get_customer_by_email(self, email):
+
+        return self.repository.get_customer_by_email(email)
+
+    def get_customer_by_phone(self, phone):
+
+        return self.repository.get_customer_by_phone(phone)

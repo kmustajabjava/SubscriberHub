@@ -1,35 +1,13 @@
-from config.database import get_connection
 from models.customer import Customer
 
+from repositories.base_repository import BaseRepository
 
-class CustomerRepository:
 
-    def get_all_customers(self):
+class CustomerRepository(BaseRepository):
 
-        connection = get_connection()
+    def _build_customer(self, row):
 
-        cursor = connection.cursor(dictionary=True)
-
-        cursor.execute("""
-            SELECT
-                CustomerID,
-                FullName,
-                Email,
-                PhoneNumber,
-                City,
-                RegistrationDate,
-                Status
-            FROM Customers
-        """)
-
-        rows = cursor.fetchall()
-
-        customers = []
-
-        for row in rows:
-
-            customers.append(
-            Customer(
+        return Customer(
             customer_id=row["CustomerID"],
             full_name=row["FullName"],
             email=row["Email"],
@@ -37,80 +15,336 @@ class CustomerRepository:
             city=row["City"],
             registration_date=row["RegistrationDate"],
             status=row["Status"]
-            )
-         )
-        cursor.close()
-        connection.close()
-        return customers
+        )
+
+    def get_all_customers(self):
+
+        connection = None
+        cursor = None
+
+        try:
+
+            connection = self.get_db_connection()
+
+            cursor = connection.cursor(dictionary=True)
+
+            cursor.execute("""
+                SELECT
+                    CustomerID,
+                    FullName,
+                    Email,
+                    PhoneNumber,
+                    City,
+                    RegistrationDate,
+                    Status
+                FROM Customers
+            """)
+
+            rows = cursor.fetchall()
+
+            customers = []
+
+            for row in rows:
+
+                customers.append(self._build_customer(row))
+
+            return customers
+
+        except Exception as e:
+
+            print(f"Database Error: {e}")
+            return []
+
+        finally:
+
+            if cursor:
+                cursor.close()
+
+            if connection:
+                connection.close()
     
     def email_exists(self, email):
 
-        connection = get_connection()
-        cursor = connection.cursor()
+        connection = None
+        cursor = None
 
-        cursor.execute(
-            "SELECT 1 FROM Customers WHERE Email = %s",
-            (email,)
-        )
+        try:
 
-        result = cursor.fetchone()
+            connection = self.get_db_connection()
+            cursor = connection.cursor()
 
-        cursor.close()
-        connection.close()
+            cursor.execute(
+                "SELECT 1 FROM Customers WHERE Email = %s",
+                (email,)
+            )
 
-        return result is not None
-    
+            return cursor.fetchone() is not None
+
+        except Exception as e:
+
+            print(f"Database Error: {e}")
+            return False
+
+        finally:
+
+            if cursor:
+                cursor.close()
+
+            if connection:
+                connection.close()
+
+
     def phone_exists(self, phone):
 
-        connection = get_connection()
-        cursor = connection.cursor()
+        connection = None
+        cursor = None
 
-        cursor.execute(
-            "SELECT 1 FROM Customers WHERE PhoneNumber = %s",
-            (phone,)
-        )
+        try:
 
-        result = cursor.fetchone()
+            connection = self.get_db_connection()
+            cursor = connection.cursor()
 
-        cursor.close()
-        connection.close()
-
-        return result is not None
-    
-
-    def insert_customer(self, customer):
-
-        connection = get_connection()
-        cursor = connection.cursor()
-
-        query = """
-            INSERT INTO Customers
-            (
-                FullName,
-                Email,
-                PhoneNumber,
-                City,
-                RegistrationDate,
-                Status
+            cursor.execute(
+                "SELECT 1 FROM Customers WHERE PhoneNumber = %s",
+                (phone,)
             )
-            VALUES
-            (%s, %s, %s, %s, %s, %s)
-        """
 
-        cursor.execute(
-            query,
-            (
-                customer.full_name,
-                customer.email,
-                customer.phone_number,
-                customer.city,
-                customer.registration_date,
-                customer.status
+            return cursor.fetchone() is not None
+
+        except Exception as e:
+
+            print(f"Database Error: {e}")
+            return False
+
+        finally:
+
+            if cursor:
+                cursor.close()
+
+            if connection:
+                connection.close()
+            
+    def customer_exists(self, customer_id):
+
+        connection = None
+        cursor = None
+
+        try:
+
+            connection = self.get_db_connection()
+            cursor = connection.cursor()
+
+            cursor.execute(
+                """
+                SELECT 1
+                FROM Customers
+                WHERE CustomerID = %s
+                """,
+                (customer_id,)
             )
-        )
 
-        connection.commit()
+            return cursor.fetchone() is not None
 
-        cursor.close()
-        connection.close()
+        except Exception as e:
 
+            print(f"Database Error: {e}")
+            return False
+
+        finally:
+
+            if cursor:
+                cursor.close()
+
+            if connection:
+                connection.close()
+
+    def get_customer_by_id(self, customer_id):
+
+        connection = None
+        cursor = None
+
+        try:
+
+            connection = self.get_db_connection()
+
+            cursor = connection.cursor(dictionary=True)
+
+            query = """
+                SELECT
+                    CustomerID,
+                    FullName,
+                    Email,
+                    PhoneNumber,
+                    City,
+                    RegistrationDate,
+                    Status
+                FROM Customers
+                WHERE CustomerID = %s
+            """
+
+            cursor.execute(query, (customer_id,))
+
+            row = cursor.fetchone()
+
+            if row:
+
+                return self._build_customer(row)
+
+            return None
+
+        except Exception as e:
+
+            print(f"Database Error: {e}")
+            return None
+
+        finally:
+
+            if cursor:
+                cursor.close()
+
+            if connection:
+                connection.close()
+
+    def get_customers_by_name(self, name):
+
+        connection = None
+        cursor = None
+
+        try:
+
+            connection = self.get_db_connection()
+
+            cursor = connection.cursor(dictionary=True)
+
+            query = """
+                SELECT
+                    CustomerID,
+                    FullName,
+                    Email,
+                    PhoneNumber,
+                    City,
+                    RegistrationDate,
+                    Status
+                FROM Customers
+                WHERE FullName LIKE %s
+                ORDER BY FullName
+            """
+
+            cursor.execute(query, ("%" + name + "%",))
+
+            rows = cursor.fetchall()
+
+            customers = []
+
+            for row in rows:
+
+                customers.append(self._build_customer(row))
+
+            return customers
+
+        except Exception as e:
+
+            print(f"Database Error: {e}")
+            return []
+
+        finally:
+
+            if cursor:
+                cursor.close()
+
+            if connection:
+                connection.close()
+
+    def get_customer_by_email(self, email):
+
+        connection = None
+        cursor = None
+
+        try:
+
+            connection = self.get_db_connection()
+
+            cursor = connection.cursor(dictionary=True)
+
+            query = """
+                SELECT
+                    CustomerID,
+                    FullName,
+                    Email,
+                    PhoneNumber,
+                    City,
+                    RegistrationDate,
+                    Status
+                FROM Customers
+                WHERE Email = %s
+            """
+
+            cursor.execute(query, (email,))
+
+            row = cursor.fetchone()
+
+            if row:
+
+                return self._build_customer(row)
+
+            return None
+
+        except Exception as e:
+
+            print(f"Database Error: {e}")
+            return None
+
+        finally:
+
+            if cursor:
+                cursor.close()
+
+            if connection:
+                connection.close()
+
+    def get_customer_by_phone(self, phone):
+
+        connection = None
+        cursor = None
+
+        try:
+
+            connection = self.get_db_connection()
+
+            cursor = connection.cursor(dictionary=True)
+
+            query = """
+                SELECT
+                    CustomerID,
+                    FullName,
+                    Email,
+                    PhoneNumber,
+                    City,
+                    RegistrationDate,
+                    Status
+                FROM Customers
+                WHERE PhoneNumber = %s
+            """
+
+            cursor.execute(query, (phone,))
+
+            row = cursor.fetchone()
+
+            if row:
+
+                return self._build_customer(row)
+
+            return None
+
+        except Exception as e:
+
+            print(f"Database Error: {e}")
+            return None
+
+        finally:
+
+            if cursor:
+                cursor.close()
+
+            if connection:
+                connection.close()
