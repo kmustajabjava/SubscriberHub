@@ -78,6 +78,7 @@ class SubscriptionRepository(BaseRepository):
             query = """
                 SELECT
                     s.SubscriptionID,
+                    s.CustomerID,
                     c.FullName,
                     p.PlanName,
                     p.SpeedMbps,
@@ -125,6 +126,7 @@ class SubscriptionRepository(BaseRepository):
             query = """
                 SELECT
                     s.SubscriptionID,
+                    s.CustomerID,
                     c.FullName,
                     p.PlanName,
                     p.SpeedMbps,

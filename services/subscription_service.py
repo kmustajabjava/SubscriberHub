@@ -7,6 +7,7 @@ from repositories.customer_repository import CustomerRepository
 from repositories.plan_repository import PlanRepository
 from repositories.subscription_repository import SubscriptionRepository
 from repositories.payment_repository import PaymentRepository
+from services.audit_service import AuditService
 
 
 class SubscriptionService:
@@ -20,6 +21,8 @@ class SubscriptionService:
         self.subscription_repository = SubscriptionRepository()
 
         self.payment_repository = PaymentRepository()
+
+        self.audit_service = AuditService()
 
     def create_subscription(
         self,
@@ -62,6 +65,7 @@ class SubscriptionService:
             subscription
         )
 
+        subscription.subscription_id = subscription_id
         # Create payment object
         payment = Payment(
             subscription_id=subscription_id,
@@ -71,9 +75,18 @@ class SubscriptionService:
         )
 
         # Save payment
-        self.payment_repository.insert_payment(payment)
+        payment_id = self.payment_repository.insert_payment(payment)
 
-        return True, "Subscription created successfully."
+        if payment_id:
+
+            self.audit_service.log_action(
+                customer_id,
+                "Subscription created."
+            )
+
+            return True, "Subscription created successfully."
+
+        return False, "Subscription creation failed."
     
     def get_all_subscriptions(self):
 
@@ -87,18 +100,53 @@ class SubscriptionService:
     
     def pause_subscription(self, subscription_id):
 
-        return self.subscription_repository.pause_subscription(
+        sub = self.subscription_repository.get_subscription_by_id(
             subscription_id
         )
+
+        if not sub:
+
+            return False
+
+        success = self.subscription_repository.pause_subscription(
+            subscription_id
+        )
+
+        if success:
+
+            self.audit_service.log_action(
+                sub["CustomerID"],
+                "Subscription paused."
+            )
+
+        return success
     
     def resume_subscription(self, subscription_id):
 
-        return self.subscription_repository.resume_subscription(
-            subscription_id
-        )
+        sub = self.subscription_repository.get_subscription_by_id(subscription_id)
+
+        success = self.subscription_repository.resume_subscription(subscription_id)
+
+        if success:
+
+            self.audit_service.log_action(
+                sub["CustomerID"],
+                "Subscription resumed."
+            )
+
+        return success
     
     def cancel_subscription(self, subscription_id):
 
-        return self.subscription_repository.cancel_subscription(
-            subscription_id
-        )
+        sub = self.subscription_repository.get_subscription_by_id(subscription_id)
+
+        success = self.subscription_repository.cancel_subscription(subscription_id)
+
+        if success:
+
+            self.audit_service.log_action(
+                sub["CustomerID"],
+                "Subscription cancelled."
+            )
+
+        return success

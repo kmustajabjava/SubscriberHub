@@ -1,4 +1,5 @@
 from repositories.customer_repository import CustomerRepository
+from services.audit_service import AuditService
 from utils.validator import (
     is_valid_email,
     is_valid_phone,
@@ -9,6 +10,8 @@ class CustomerService:
     def __init__(self):
 
         self.repository = CustomerRepository()
+        self.audit_service = AuditService()
+        
 
     def get_all_customers(self):
 
@@ -31,9 +34,17 @@ class CustomerService:
         if self.repository.phone_exists(customer.phone_number):
             return False, "Phone number already exists."
 
-        success = self.repository.insert_customer(customer)
+        customer_id = self.repository.insert_customer(customer)
 
-        if success:
+        if customer_id:
+
+            customer.customer_id = customer_id
+
+            self.audit_service.log_action(
+                customer.customer_id,
+                "Customer registered."
+            )
+
             return True, "Customer registered successfully."
 
         return False, "Customer registration failed."

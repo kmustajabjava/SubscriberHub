@@ -42,12 +42,12 @@ class SupportTicketRepository(BaseRepository):
 
             connection.commit()
 
-            return True
+            return cursor.lastrowid
 
         except Exception as e:
 
             print(f"Database Error: {e}")
-            return False
+            return None
 
         finally:
 

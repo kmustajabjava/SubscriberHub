@@ -1,12 +1,12 @@
-from config.database import get_connection
+from repositories.base_repository import BaseRepository
 from models.plan import Plan
 
 
-class PlanRepository:
+class PlanRepository(BaseRepository):
 
     def get_all_plans(self):
 
-        connection = get_connection()
+        connection = self.get_db_connection()
         cursor = connection.cursor(dictionary=True)
 
         cursor.execute("""
@@ -41,7 +41,7 @@ class PlanRepository:
     
     def get_plan_by_id(self, plan_id):
 
-        connection = get_connection()
+        connection = self.get_db_connection()
         cursor = connection.cursor(dictionary=True)
 
         cursor.execute(

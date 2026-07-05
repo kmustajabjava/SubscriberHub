@@ -145,42 +145,6 @@ class SubscriptionController:
 
             print("\nSubscription not found.")
 
-    def pause_subscription(self, subscription_id):
-
-        connection = None
-        cursor = None
-
-        try:
-
-            connection = self.get_db_connection()
-
-            cursor = connection.cursor()
-
-            query = """
-                UPDATE Subscriptions
-                SET Status = 'Paused'
-                WHERE SubscriptionID = %s
-                AND Status = 'Active'
-            """
-
-            cursor.execute(query, (subscription_id,))
-
-            connection.commit()
-
-            return cursor.rowcount > 0
-
-        except Exception as e:
-
-            print(f"Database Error: {e}")
-            return False
-
-        finally:
-
-            if cursor:
-                cursor.close()
-
-            if connection:
-                connection.close()
 
     def pause_subscription(self):
 

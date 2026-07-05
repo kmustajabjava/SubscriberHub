@@ -5,37 +5,54 @@ class PaymentRepository(BaseRepository):
 
     def insert_payment(self, payment):
 
-        connection = self.get_db_connection()
-        cursor = connection.cursor()
+        connection = None
+        cursor = None
 
-        query = """
-            INSERT INTO Payments
-            (
-                SubscriptionID,
-                Amount,
-                PaymentDate,
-                PaymentMethod,
-                Status
+        try:
+
+            connection = self.get_db_connection()
+            cursor = connection.cursor()
+
+            query = """
+                INSERT INTO Payments
+                (
+                    SubscriptionID,
+                    Amount,
+                    PaymentDate,
+                    PaymentMethod,
+                    Status
+                )
+                VALUES
+                (%s, %s, %s, %s, %s)
+            """
+
+            cursor.execute(
+                query,
+                (
+                    payment.subscription_id,
+                    payment.amount,
+                    payment.payment_date,
+                    payment.payment_method,
+                    payment.status
+                )
             )
-            VALUES
-            (%s, %s, %s, %s, %s)
-        """
 
-        cursor.execute(
-            query,
-            (
-                payment.subscription_id,
-                payment.amount,
-                payment.payment_date,
-                payment.payment_method,
-                payment.status
-            )
-        )
+            connection.commit()
 
-        connection.commit()
+            return cursor.lastrowid
 
-        cursor.close()
-        connection.close()
+        except Exception as e:
+
+            print(f"Database Error: {e}")
+            return None
+
+        finally:
+
+            if cursor:
+                cursor.close()
+
+            if connection:
+                connection.close()
 
     def get_all_payments(self):
 
