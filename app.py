@@ -3,6 +3,20 @@ from controllers.plan_controller import PlanController
 from controllers.subscription_controller import SubscriptionController
 
 
+def print_main_menu():
+
+    print("\n" + "=" * 50)
+    print("             SubscriberHub v1.0")
+    print("=" * 50)
+    print("1. Customer Management")
+    print("2. Plan Management")
+    print("3. Subscription Management")
+    print("4. Payment Management")
+    print("5. Support Ticket Management")
+    print("0. Exit")
+    print("=" * 50)
+
+
 def main():
 
     customer_controller = CustomerController()
@@ -11,40 +25,35 @@ def main():
 
     while True:
 
-        print("\n" + "=" * 45)
-        print("        SubscriberHub v1.0")
-        print("=" * 45)
-        print("1. Display Customers")
-        print("2. Register Customer")
-        print("3. Display Plans")
-        print("4. Create Subscription")
-        print("5. Exit")
-        print("=" * 45)
+        print_main_menu()
 
-        choice = input("Select an option: ")
+        choice = input("Select an option: ").strip()
 
         if choice == "1":
 
-            customer_controller.display_customers()
+            customer_controller.customer_menu()
 
         elif choice == "2":
 
-            customer_controller.register_customer()
+            plan_controller.plan_menu()
 
         elif choice == "3":
 
-            plan_controller.display_plans()
+            subscription_controller.subscription_menu()
 
         elif choice == "4":
 
-            subscription_controller.create_subscription()
+            print("\n===== PAYMENT MANAGEMENT =====")
+            print("Coming in Sprint 5.")
 
         elif choice == "5":
 
-            customer_controller.search_customer()
+            print("\n===== SUPPORT TICKET MANAGEMENT =====")
+            print("Coming in Sprint 6.")
 
-        elif choice == "6":
+        elif choice == "0":
 
+            print("\nThank you for using SubscriberHub!")
             break
 
         else:

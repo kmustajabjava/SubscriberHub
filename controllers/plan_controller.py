@@ -7,6 +7,28 @@ class PlanController:
 
         self.service = PlanService()
 
+    def plan_menu(self):
+
+        while True:
+
+            print("\n===== PLAN MANAGEMENT =====")
+            print("1. Display Plans")
+            print("0. Back")
+
+            choice = input("\nSelect Option: ")
+
+            if choice == "1":
+
+                self.display_plans()
+
+            elif choice == "0":
+
+                break
+
+            else:
+
+                print("Invalid option.")
+
     def display_plans(self):
 
         plans = self.service.get_all_plans()

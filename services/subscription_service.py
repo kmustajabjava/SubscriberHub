@@ -74,3 +74,31 @@ class SubscriptionService:
         self.payment_repository.insert_payment(payment)
 
         return True, "Subscription created successfully."
+    
+    def get_all_subscriptions(self):
+
+        return self.subscription_repository.get_all_subscriptions()
+    
+    def get_subscription_by_id(self, subscription_id):
+
+        return self.subscription_repository.get_subscription_by_id(
+            subscription_id
+        )
+    
+    def pause_subscription(self, subscription_id):
+
+        return self.subscription_repository.pause_subscription(
+            subscription_id
+        )
+    
+    def resume_subscription(self, subscription_id):
+
+        return self.subscription_repository.resume_subscription(
+            subscription_id
+        )
+    
+    def cancel_subscription(self, subscription_id):
+
+        return self.subscription_repository.cancel_subscription(
+            subscription_id
+        )

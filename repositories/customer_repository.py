@@ -348,3 +348,56 @@ class CustomerRepository(BaseRepository):
 
             if connection:
                 connection.close()
+
+    def insert_customer(self, customer):
+
+        connection = None
+        cursor = None
+
+        try:
+
+            connection = self.get_db_connection()
+            cursor = connection.cursor()
+
+            query = """
+                INSERT INTO Customers
+                (
+                    FullName,
+                    Email,
+                    PhoneNumber,
+                    City,
+                    RegistrationDate,
+                    Status
+                )
+                VALUES
+                (%s, %s, %s, %s, %s, %s)
+            """
+
+            cursor.execute(
+                query,
+                (
+                    customer.full_name,
+                    customer.email,
+                    customer.phone_number,
+                    customer.city,
+                    customer.registration_date,
+                    customer.status
+                )
+            )
+
+            connection.commit()
+
+            return True
+
+        except Exception as e:
+
+            print(f"Database Error: {e}")
+            return False
+
+        finally:
+
+            if cursor:
+                cursor.close()
+
+            if connection:
+                connection.close()              

@@ -11,6 +11,38 @@ class CustomerController:
 
         self.service = CustomerService()
 
+    def customer_menu(self):
+
+        while True:
+
+            print("\n===== CUSTOMER MANAGEMENT =====")
+            print("1. Display Customers")
+            print("2. Register Customer")
+            print("3. Search Customer")
+            print("0. Back")
+
+            choice = input("\nSelect Option: ")
+
+            if choice == "1":
+
+                self.display_customers()
+
+            elif choice == "2":
+
+                self.register_customer()
+
+            elif choice == "3":
+
+                self.search_customer()
+
+            elif choice == "0":
+
+                break
+
+            else:
+
+                print("Invalid option.")
+
     def display_customers(self):
 
         customers = self.service.get_all_customers()
