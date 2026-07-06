@@ -8,6 +8,9 @@ __pycache__/
 venv/
 .env/
 
+# Environment Variables
+.env
+
 # VS Code
 .vscode/
 
@@ -17,6 +20,3 @@ Thumbs.db
 
 # Logs
 *.log
-
-# MySQL Configuration
-config/database_config.py

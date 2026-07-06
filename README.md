@@ -1,28 +1,34 @@
 # SubscriberHub
 
-A telecom-inspired Customer Subscription Management System built to demonstrate SQL, MySQL, ETL, REST APIs, and backend development concepts.
+SubscriberHub is a console-based telecom-inspired Customer Subscription Management System developed in Python using a layered architecture (Controller → Service → Repository) with a MySQL backend.
+
+The project simulates common ISP/customer management operations including customer registration, subscription lifecycle management, payment tracking, support ticket management, and audit logging.
+
+---
 
 ## Features
 
 - Customer Management
 - Subscription Management
-- Payment Tracking
+- Payment Management
 - Support Ticket Management
 - Audit Logging
-- Normalized MySQL Database
-- SQL Reports
-- ETL Pipeline (Python)
-- REST API (Flask) *(In Progress)*
+- Input Validation
+- Layered Architecture
+- MySQL Relational Database
+
+---
 
 ## Tech Stack
 
+- Python 3
 - MySQL
-- Python
-- Flask
-- Pandas
+- mysql-connector-python
 - Git
 - GitHub
 - VS Code
+
+---
 
 ## Database Tables
 
@@ -33,24 +39,71 @@ A telecom-inspired Customer Subscription Management System built to demonstrate 
 - SupportTickets
 - AuditLogs
 
-## Current Progress
+---
 
-- [x] Database Design
-- [x] Table Creation
-- [x] Constraints
-- [x] Sample Data
-- [x] Basic SQL Queries
-- [ ] Advanced SQL
-- [ ] Views
-- [ ] Stored Procedures
-- [ ] ETL Automation
-- [ ] REST API
-- [ ] Testing
+## Project Structure
 
-## Future Improvements
+```
+SubscriberHub/
+│
+├── config/
+├── controllers/
+├── models/
+├── repositories/
+├── services/
+├── utils/
+├── sql/
+├── app.py
+└── README.md
+```
 
-- Transaction Reference for Payments
-- Assigned Engineer in Support Tickets
-- Invoice Module
-- Dashboard
-- Authentication
+---
+
+## Implemented Modules
+
+- Customer Management
+- Subscription Management
+- Payment Management
+- Support Ticket Management
+- Audit Logging
+
+---
+
+## Design Patterns
+
+- Repository Pattern
+- Service Layer
+- MVC-inspired Architecture
+- Separation of Concerns
+
+---
+
+## Installation
+
+1. Clone the repository
+
+```bash
+git clone https://github.com/kmustajabjava/SubscriberHub.git
+```
+
+2. Install dependencies
+
+```bash
+pip install mysql-connector-python
+```
+
+3. Create the MySQL database
+
+Run the SQL scripts inside the `sql/` folder.
+
+4. Update database credentials inside
+
+```
+config/database.py
+```
+
+5. Run the application
+
+```bash
+python app.py
+```
